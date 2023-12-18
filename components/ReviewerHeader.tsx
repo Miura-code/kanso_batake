@@ -6,6 +6,7 @@ import {
 	CardHeader,
 	CardTitle,
 } from "@/components/ui/card"
+
 import { fetchUser } from '@/actions/user.action'
 
 const ReviewHeader = async (
@@ -18,15 +19,19 @@ const ReviewHeader = async (
 			<CardTitle className="truncate leading-normal">
 				{user.name}
 			</CardTitle>
-			<CardDescription>
-					{user.affiliation.map((institution) => {
-							return (<p>{institution}</p>)
-						})}
-					{user.field.map((f) => {
-							return (<p>{f}</p>)
-						})}
-          <p>{ user.role }</p>
-			</CardDescription>
+			<div className='text-sm text-muted-foreground'>
+				{user.affiliation.map((institution) => {
+						return (<p key={institution}>所属: {institution}</p>)
+					})}
+				{user.field.map((f) => {
+						return (<p key={f}>分野: {f}</p>)
+					})}
+				<p>役職: { user.role }</p>
+				{user.works.map((work) => {
+						return (<p key={work}>URL: <a href={work} target='_blank'>{work}</a></p>)
+					})}
+			</div>
+
 		</CardHeader>
 		<CardContent className='break-words whitespace-pre-line'>
 		</CardContent>
