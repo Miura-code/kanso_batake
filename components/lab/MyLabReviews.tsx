@@ -1,7 +1,9 @@
 import { fetchReviewsByUserIds } from "@/actions/review.action";
 import React from "react";
-import Review from "./Review";
-import { fetchUserIdsByLabId } from "@/actions/user.action";
+import Review from "../Review";
+import { fetchUser, fetchUserIdsByLabId } from "@/actions/user.action";
+import { currentUser } from '@clerk/nextjs';
+
 
 const MyLabReviews = async ({ labId, tag }: { labId: string, tag?: string }) => {
   const userIds: string[] = await fetchUserIdsByLabId(labId);
@@ -10,6 +12,7 @@ const MyLabReviews = async ({ labId, tag }: { labId: string, tag?: string }) => 
   if (reviewsData.length == 0) {
     return <div>No Reviews.</div>;
   }
+  const clamp = true
 
   return (
     <>
@@ -22,7 +25,8 @@ const MyLabReviews = async ({ labId, tag }: { labId: string, tag?: string }) => 
     }
     <div className="flex flex-col gap-2">
     {reviewsData.map((review) => {
-        return <Review key={review.id} reviewData={review} />;
+        //return <Review key={review.id} reviewData={review} userId={user.id}/>;
+        return <Review key={review.id} reviewData={review} clamp={clamp}/>;
     })}
     </div>
     </>
