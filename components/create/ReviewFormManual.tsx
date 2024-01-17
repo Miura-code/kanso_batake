@@ -21,12 +21,12 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "./ui/textarea";
+import { Textarea } from "../ui/textarea";
 import { setReview } from "@/actions/review.action";
 import { reviewType } from "@/constants";
 import { useRef, useState } from "react";
 import { Loader2 } from "lucide-react";
-import CalcelCreateReview from "./CancelCreateReview";
+import CancelCreateReview from "../CancelCreateReview";
 import { delEmpty_tag } from "@/lib/utils";
 import ReactMarkDown from "react-markdown";
 
@@ -194,7 +194,7 @@ export function ReviewFormManual({
         onClick={beEdit}
         className={`
             ${!isPreview ? "bg-white border border-gray-300 hover:bg-white  text-gray-800" : "bg-gray-200 text-gray-800 hover:bg-gray-300 focus:border-gray-400 focus:ring focus:ring-gray-200"}
-            px-4 py-2 rounded-none rounded-l-md text-[2px] w-fit
+            px-4 py-2 rounded-none rounded-l-md text-xs w-fit
         `}>
         Edit
         </Button>
@@ -203,7 +203,7 @@ export function ReviewFormManual({
         onClick={bePreview}
         className={`
             ${isPreview ? "bg-white border border-gray-300 hover:bg-white text-gray-800" : "bg-gray-200 text-gray-800 hover:bg-gray-300 focus:border-gray-400 focus:ring focus:ring-gray-200"}
-            px-4 py-2 rounded-none rounded-r-md text-[2px] w-fit
+            px-4 py-2 rounded-none rounded-r-md text-xs w-fit
         `}>
         Preview
         </Button>
@@ -351,7 +351,7 @@ export function ReviewFormManual({
         ) : (
           <div className="flex flex-row gap-3">
             <Button type="submit">Submit</Button>
-            <CalcelCreateReview />
+            <CancelCreateReview />
           </div>
         )}
       </form>

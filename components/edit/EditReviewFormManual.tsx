@@ -14,15 +14,24 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+
 import { Input } from "@/components/ui/input";
-import { Textarea } from "./ui/textarea";
+import { Textarea } from "../ui/textarea";
 import { setReview, updateReview } from "@/actions/review.action";
 import { reviewType } from "@/constants";
 import { useRef, useState } from "react";
 import { Loader2 } from "lucide-react";
-import CalcelCreateReview from "./CancelCreateReview";
+import CancelEditReview from "../CancelEditReview";
 
 import { delEmpty_tag } from "@/lib/utils";
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+  } from "@/components/ui/card";
+import ReactMarkDown from 'react-markdown';
 
 // フォームのバリデーションスキーマを定義
 const FormSchema = z.object({
@@ -72,38 +81,31 @@ export function ReviewFormManual({
   userName: string;
   review: reviewType;
 }) {
-    console.log(typeof(review.year))
-  const tags = review.tags.toString()
-
   const isLoading = useRef(false);// ローディング状態を追跡するためのuseRef
-  const [inputTitle, setTitle] = useState(review.paperTitle)
-  const [inputContents, setContents] = useState(review.contents)
-  const [inputVenue, setVenue] = useState(review.venue)
-  const [inputYear, setYear] = useState(review.year)
-  const [inputJournal_name, setJournal_name] = useState(review.journal_name)
-  const [inputJournal_pages, setJournal_pages] = useState(review.journal_pages)
-  const [inputJournal_vol, setJournal_vol] = useState(review.journal_vol)
-  const [inputAuthors, setAuthors] = useState(review.authors)
-  const [inputDoi, setDoi] = useState(review.doi)
-  const [inputLink, setLink] = useState(review.link)
-  const [inputTags, setTags] = useState(tags)
+  const [isPreview, setPreview] = useState(false);
+  const bePreview = () => {
+    setPreview(true);
+  }
+  const beEdit = () => {
+    setPreview(false);
+  }
 
   // useFormフックを使ってフォームを初期化
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),// zodResolverを使ってバリデーションを設定
     defaultValues: {
       // フォームフィールドのデフォルト値を設定
-      PaperTitle: review.paperTitle,
-      ReviewContents: review.contents,
-      venue: review.venue,
-      year: review.year,
-      journal_name: review.journal_name,
-      journal_pages: review.journal_pages,
-      journal_vol: review.journal_vol,
-      authors: review.authors,
-      doi: review.doi,
-      link: review.link,
-      Tags: tags,
+      PaperTitle: review.paperTitle ? review.paperTitle : "",
+      ReviewContents: review.contents ? review.contents : "",
+      venue: review.venue ? review.venue : "",
+      year: review.year ? review.year : "",
+      journal_name: review.journal_name ? review.journal_name : "",
+      journal_pages: review.journal_pages ? review.journal_pages : "",
+      journal_vol: review.journal_vol ? review.journal_vol : "",
+      authors: review.authors ? review.authors : "",
+      doi: review.doi ? review.doi : "",
+      link: review.link ? review.link : "",
+      Tags: review.tags ? review.tags.toString() : "",
     },
   });
 
@@ -138,47 +140,36 @@ export function ReviewFormManual({
   }
 
   const onChangeTitleHandler = async(e: { target: { value: string; }; }) => {
-    setTitle(e.target.value)
     form.setValue("PaperTitle", e.target.value)
   }
   const onChangeContentsHandler = async(e: { target: { value: string; }; }) => {
-    setContents(e.target.value)
     form.setValue("ReviewContents", e.target.value)
   }
   const onChangeVenueHandler = async(e: { target: { value: string; }; }) => {
-    setVenue(e.target.value)
     form.setValue("venue", e.target.value)
   }
   const onChangeYearHandler = async(e: { target: { value: string; }; }) => {
-    setYear(e.target.value)
     form.setValue("year", e.target.value)
   }
   const onChangeJnameHandler = async(e: { target: { value: string; }; }) => {
-    setJournal_name(e.target.value)
     form.setValue("journal_name", e.target.value)
   }
   const onChangeJpageHandler = async(e: { target: { value: string; }; }) => {
-    setJournal_pages(e.target.value)
     form.setValue("journal_pages", e.target.value)
   }
   const onChangeJvolHandler = async(e: { target: { value: string; }; }) => {
-    setJournal_vol(e.target.value)
     form.setValue("journal_vol", e.target.value)
   }
   const onChangeAuthorsHandler = async(e: { target: { value: string; }; }) => {
-    setAuthors(e.target.value)
     form.setValue("authors", e.target.value)
   }
   const onChangeDoiHandler = async(e: { target: { value: string; }; }) => {
-    setDoi(e.target.value)
     form.setValue("doi", e.target.value)
   }
   const onChangeLinkHandler = async(e: { target: { value: string; }; }) => {
-    setLink(e.target.value)
     form.setValue("link", e.target.value)
   }
   const onChangeTagsHandler = async(e: { target: { value: string; }; }) => {
-    setTags(e.target.value)
     form.setValue("Tags", e.target.value)
   }
 
@@ -242,25 +233,55 @@ export function ReviewFormManual({
           )}
         />
 
+<Button
+        type="button"
+        onClick={beEdit}
+        className={`
+            ${!isPreview ? "bg-white border border-gray-300 hover:bg-white  text-gray-800" : "bg-gray-200 text-gray-800 hover:bg-gray-300 focus:border-gray-400 focus:ring focus:ring-gray-200"}
+            px-4 py-2 rounded-none rounded-l-md text-xs w-fit
+        `}>
+        Edit
+        </Button>
+        <Button
+        type="button"
+        onClick={bePreview}
+        className={`
+            ${isPreview ? "bg-white border border-gray-300 hover:bg-white text-gray-800" : "bg-gray-200 text-gray-800 hover:bg-gray-300 focus:border-gray-400 focus:ring focus:ring-gray-200"}
+            px-4 py-2 rounded-none rounded-r-md text-xs w-fit
+        `}>
+        Preview
+        </Button>
+        
+
+        {!isPreview ? 
         <FormField
-          control={form.control}
-          name="ReviewContents"
-          render={({ field }) => (
+            control={form.control}
+            name="ReviewContents"
+            render={({ field }) => (
             <FormItem>
-              <FormLabel className="flex flex-row gap-1">レビュー<p className="text-red-600">*</p></FormLabel>
-              <FormControl>
+                <FormLabel className="flex flex-row gap-1">レビュー<p className="text-red-600">*</p></FormLabel>
+                <FormControl>
                 <Textarea
-                  placeholder="論文のレビューを入力してください。"
-                  id="message"
-                  rows={10}
-                  {...field}
-                  onChange={onChangeContentsHandler}
+                    placeholder="論文のレビューを入力してください。"
+                    id="message"
+                    rows={10}
+                    {...field}
                 />
-              </FormControl>
-              <FormMessage />
+                </FormControl>
+                <FormMessage />
             </FormItem>
-          )}
+            )}
         />
+        :
+        <>
+        <p className="text-sm font-medium">プレビュー</p>
+        <Card>
+        <CardContent className="markdown">
+            <ReactMarkDown>{form.getValues("ReviewContents")}</ReactMarkDown>
+        </CardContent>
+        </Card>
+        </>
+        }
 
         <FormField
           control={form.control}
@@ -391,7 +412,7 @@ export function ReviewFormManual({
         ) : (
           <div className="flex flex-row gap-3">
             <Button type="submit">Save</Button>
-            <CalcelCreateReview />
+            <CancelEditReview userId={userId} />
           </div>
         )}
       </form>
